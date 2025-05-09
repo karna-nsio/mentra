@@ -1,0 +1,189 @@
+✅ .NET POC Requirements Document
+
+Summary
+
+This Proof of Concept (POC) aims to develop a task management application using .NET that facilitates streamlined collaboration between two user roles: Mentors and Assistants. The application will support secure OTP-based email login, ensuring a passwordless and user-friendly authentication experience for both roles.
+Once logged in, Mentors will have the ability to create tasks, attach resources (such as links or documents), and assign these tasks to Assistants along with a defined time frame. Each task will be associated with metadata such as title, description, assigned user, deadlines, and current status. Mentors will also be able to track the progress of assigned tasks in real time.
+Assistants, upon logging in, will access their list of assigned tasks and corresponding resources. They will be able to update the task status as they progress through various stages—Pending, Doing, and Done. Any status change will automatically trigger a Slack message to notify the assigned Mentor, ensuring real-time updates and reducing communication delays.
+In addition, the application will be integrated with Slack, enabling two-way communication. Status updates from Assistants will be posted to either a designated Slack channel or as a direct message to the Team Leader or Mentor. Mentors can reply directly within Slack, and those responses will be tracked and linked back to the related task inside the application, allowing full traceability and context.
+This system ensures smooth task delegation, live updates, and traceable communication between Mentors and Assistants, with Slack acting as the real-time messaging backbone. The final goal is to demonstrate an efficient, interactive, and accountable workflow system within a modern .NET application stack.
+
+
+🧑‍💼 User Roles
+
+* Mentor
+* Assistant
+
+
+🔐 Authentication
+
+*  Implement OTP-based email login for both Mentor and Assistant.
+
+
+📝 Mentor Capabilities
+
+*  Login using email-based OTP.
+*  Create and manage a list of tasks.
+*  Upload and associate resources with tasks.
+*  Assign tasks to an Assistant along with a specific time frame.
+*  Track Assistant’s task progress.
+*  Receive Slack notifications when task stage changes (e.g., "Doing", "Done").
+*  Respond to tasks directly through Slack.
+*  Replies from Mentor on Slack should be tracked and linked to the corresponding task.
+
+
+🧑‍🔧 Assistant Capabilities
+
+*  Login using email-based OTP.
+*  View assigned tasks and related resources.
+*  Change task status to:
+    *  Doing
+    *  Done
+*  Automatically send Slack messages to Mentor when task status changes.
+
+
+📢 Slack Integration
+
+*  Send task status updates to Team Leader via:
+    *  Slack Channel
+    *  Slack DM
+*  Enable Mentor to reply via Slack.
+*  Track Slack replies and associate them with the relevant task.
+
+
+Task 
+
+Field
+	Type
+	Notes
+
+TaskId
+	GUID / INT
+	Primary Key
+
+Title
+	String
+	
+
+Description
+	Text
+	
+
+CreatedBy
+	FK → User
+	Mentor
+
+AssignedTo
+	FK → User
+	Assistant
+
+StartTime
+	DateTime
+	
+
+EndTime
+	DateTime
+	
+
+CurrentStatus
+	Enum
+	Pending, Doing, Done
+
+CreatedAt
+	DateTime
+	
+
+
+Field
+	Type
+	Notes
+
+StatusUpdateId
+	GUID / INT
+	Primary Key
+
+TaskId
+	FK → Task
+	
+
+UpdatedBy
+	FK → User
+	Assistant
+
+NewStatus
+	Enum
+	Pending, Doing, Done
+
+UpdatedAt
+	DateTime
+	
+
+
+Field
+	Type
+	Notes
+
+ResourceId
+	GUID / INT
+	Primary Key
+
+TaskId
+	FK → Task
+	
+
+ResourceUrl
+	String
+	Path or URL to file/resource
+
+Description
+	Text
+	Optional
+
+
+Field
+	Type
+	Notes
+
+SlackMessageId
+	GUID / INT
+	Primary Key
+
+TaskId
+	FK → Task
+	
+
+SentBy
+	FK → User
+	Assistant or Mentor
+
+SentTo
+	FK → User
+	Mentor or Team Leader
+
+ChannelType
+	Enum
+	DM, Channel
+
+MessageContent
+	Text
+	
+
+Timestamp
+	DateTime
+	
+
+IsReply
+	Boolean
+	True if it's a reply
+
+ReplyToMessageId
+	FK → SlackMessage
+	Nullable, for threading
+
+
+
+Deployment 
+
+1. Local → docker compose up 
+2. Production → AWS.
+
