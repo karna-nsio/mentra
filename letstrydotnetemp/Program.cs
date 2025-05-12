@@ -1,6 +1,7 @@
 using letstrydotnetemp.Services;
 using letstrydotnetemp.Repositories;
 using letstrydotnetemp.Data;
+using letstrydotnetemp.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -22,7 +23,7 @@ if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration.");
 }
-
+ 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(connectionString, npgsqlOptions =>
@@ -32,10 +33,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             maxRetryDelay: TimeSpan.FromSeconds(30),
             errorCodesToAdd: null);
     });
+    options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 // Register our services
 builder.Services.AddScoped<ITaskService, TaskService>();
+// TaskService and TaskRepository is scoped services.
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 var app = builder.Build();
@@ -69,5 +72,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+// Add global exception handler
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.Run();

@@ -6,7 +6,7 @@ using letstrydotnetemp.Models;
 namespace letstrydotnetemp.Repositories
 {
     public interface ITaskRepository
-    {
+    {   
         Task<Models.Task> CreateTaskAsync(Models.Task task);
         Task<IEnumerable<Models.Task>> GetAllTasksAsync();
         Task<Models.Task> GetTaskByIdAsync(Guid taskId);

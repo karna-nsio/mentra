@@ -187,3 +187,4 @@ Deployment
 1. Local → docker compose up 
 2. Production → AWS.
 
+
