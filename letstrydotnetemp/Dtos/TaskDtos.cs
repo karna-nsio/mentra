@@ -30,4 +30,4 @@ namespace letstrydotnetemp.DTOs
         public letstrydotnetemp.Models.TaskStatus CurrentStatus { get; set; }
         public DateTime CreatedAt { get; set; }
     }
-} 
+}

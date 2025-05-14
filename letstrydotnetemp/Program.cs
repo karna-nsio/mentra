@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
+using Microsoft.Extensions.DependencyInjection;      // for AddStackExchangeRedisCache
+using Microsoft.Extensions.Caching.StackExchangeRedis; // for Redis-specific options
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +43,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<ITaskService, TaskService>();
 // TaskService and TaskRepository is scoped services.
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddMemoryCache();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "SampleInstance";
+});
 
 var app = builder.Build();
 
