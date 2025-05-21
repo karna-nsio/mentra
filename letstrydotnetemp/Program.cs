@@ -18,6 +18,32 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Management API", Version = "v1" });
+    
+    // Add API Key authentication to Swagger
+    c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+    {
+        Description = "API Key Authentication",
+        Name = "X-API-Key",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "ApiKey"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "ApiKey"
+                },
+                In = ParameterLocation.Header
+            },
+            new string[] {}
+        }
+    });
 });
 
 // Configure database
@@ -75,10 +101,18 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Management API V1");
+        c.RoutePrefix = string.Empty; // To serve the Swagger UI at the app's root
+    });
 }
 
 app.UseHttpsRedirection();
+
+// Add API Key authentication middleware
+app.UseApiKeyAuth();
+
 app.UseAuthorization();
 app.MapControllers();
 
