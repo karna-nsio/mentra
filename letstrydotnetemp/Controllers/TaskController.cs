@@ -22,8 +22,25 @@ namespace letstrydotnetemp.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskResponseDto>> CreateTask(CreateTaskDto createTaskDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Trim string inputs
+            createTaskDto.Title = createTaskDto.Title?.Trim();
+            createTaskDto.Description = createTaskDto.Description?.Trim();
+            createTaskDto.Priority = createTaskDto.Priority?.Trim();
+
+            // Validate due date if provided
+            if (createTaskDto.DueDate.HasValue && createTaskDto.DueDate.Value < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("DueDate", "Due date cannot be in the past");
+                return BadRequest(ModelState);
+            }
+
             // TODO: Get mentorId from authenticated user
-            var mentorId = createTaskDto.CreatedBy; // Temporary until authentication is implemented
+            var mentorId = createTaskDto.CreatedBy;
             var task = await _taskService.CreateTaskAsync(createTaskDto, mentorId);
             return CreatedAtAction(nameof(GetTaskById), new { id = task.TaskId }, task);
         }

@@ -25,9 +25,9 @@ namespace letstrydotnetemp.Services
                 Title = createTaskDto.Title,
                 Description = createTaskDto.Description,
                 CreatedBy = mentorId,
-                AssignedTo = createTaskDto.AssignedTo,
-                StartTime = createTaskDto.StartTime,
-                EndTime = createTaskDto.EndTime,
+                AssignedTo = createTaskDto.AssignedTo ?? Guid.Empty,
+                StartTime = createTaskDto.StartTime ?? DateTime.UtcNow,
+                EndTime = createTaskDto.EndTime ?? DateTime.UtcNow.AddDays(7),
                 CurrentStatus = Models.TaskStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
